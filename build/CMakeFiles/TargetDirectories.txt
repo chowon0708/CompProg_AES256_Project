@@ -1,3 +1,0 @@
-/home/shinwon/AES256_project/build/CMakeFiles/AES256.dir
-/home/shinwon/AES256_project/build/CMakeFiles/edit_cache.dir
-/home/shinwon/AES256_project/build/CMakeFiles/rebuild_cache.dir
