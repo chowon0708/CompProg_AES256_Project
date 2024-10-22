@@ -1,44 +1,96 @@
 #include "AES256.hpp"
+#include "CTR.hpp"
+#include "HexUtils.hpp"
+#include "FileUtils.hpp"
 #include <iostream>
 #include <sstream>
 #include <iomanip> 
+#include <cstring>
 
-std::array<uint32_t, 8> hexStringToKey(const std::string& hexStr) {
-    std::array<uint32_t, 8> key{};
-    std::stringstream ss(hexStr);
+int main(int argc, char* argv[]) {
+    if (argc >= 2) {
+        // Generate a random AES256 key
+        if (std::strcmp(argv[1], "-k") == 0) {
+            std::string filename;
 
-    for (size_t i = 0; i < 8; ++i) {
-        std::string part = hexStr.substr(i * 8, 8); // Each part is 8 hex characters (32 bits)
-        key[i] = std::stoul(part, nullptr, 16); // Convert hex string to uint32_t
-    }
+            if (argc == 3 && std::strlen(argv[2]) > 0) {
+                filename = argv[2];
+            } else {
+                filename = generateRandomFilename(); 
+            }
 
-    return key;
-}
-int main(){
-    std::string keyStr = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f";
-    std::array<uint32_t, 8> aes256Key = hexStringToKey(keyStr);
-    AES256 aes(aes256Key);
-    std::array<std::array<uint8_t, 4>, 4> state = {
-        0x00, 0x44, 0x88, 0xcc,
-        0x11, 0x55, 0x99, 0xdd,
-        0x22, 0x66, 0xaa, 0xee,
-        0x33, 0x77, 0xbb, 0xff
-    };
-    aes.encrypt(state);
-    for (const auto& row : state) {
-        for (auto val : row) {
-            std::cout << std::hex <<std::setw(2) << std::setfill('0') << static_cast<int>(val) << " ";
+            std::vector<uint8_t> aes256Key = generateAES256Key();
+            saveKeyToFile(aes256Key, filename);
+            return 0;
+        }   // Encrypt a file 
+        else if (std::strcmp(argv[1], "-e") == 0 && argc == 4) {
+
+            std::string keyFilename = argv[2];
+            std::string inputFilename = argv[3];
+
+            std::vector<uint8_t> key = loadKeyFromFile(keyFilename);
+            if (key.empty()) {
+                std::cerr << "Error: Failed to load key." << std::endl;
+                return 1;
+            }
+
+            std::string outputFilename = inputFilename + ".enc"; 
+            encryptFileCTR(inputFilename, key, outputFilename);
+            return 0;
+        }   // Decrypt a file 
+        else if (std::strcmp(argv[1], "-d") == 0 && argc == 4) {
+            std::string keyFilename = argv[2];
+            std::string inputFilename = argv[3];
+
+
+            std::vector<uint8_t> key = loadKeyFromFile(keyFilename);
+            if (key.empty()) {
+                std::cerr << "Error: Failed to load key." << std::endl;
+                return 1;
+            }
+
+            // remove the .enc extension
+            std::string outputFilename = inputFilename.substr(0, inputFilename.size() - 4) + ".dec"; 
+
+            decryptFileCTR(inputFilename, key, outputFilename);
+            return 0;
         }
-        std::cout << std::endl;
     }
-    aes.decrypt(state);
-    std::cout << std::endl;
-    for (const auto& row : state) {
-        for (auto val : row) {
-            std::cout << std::hex <<std::setw(2) << std::setfill('0') << static_cast<int>(val) << " ";
-        }
-        std::cout << std::endl;
-    }
-    //aes.printRoundKeys();
+
+    std::cerr << "Usage: " << argv[0] << " -k [filename]" << std::endl;
+    std::cerr << "       " << argv[0] << " -e <keyfile> <inputfile>" << std::endl;
+    std::cerr << "       " << argv[0] << " -d <keyfile> <encfile>" << std::endl;
+    return 1;
+    
+    
+
     return 0;
 }
+
+
+// Uncomment the following code to test the correctness of AES256_CTR class
+// The example is based on the NIST document: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/AES_CTR.pdf
+
+// int main(){
+    // std::string keyStr = "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4";
+    // std::string plaintextStr = "6BC1BEE22E409F96E93D7E117393172AAE2D8A571E03AC9C9EB76FAC45AF8E5130C81C46A35CE411E5FBC1191A0A52EFF69F2445DF4F9B17AD2B417BE66C3710";
+    // std::string nonceStr = "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF";
+    // std::vector<uint8_t> aes256Key = hexStringToBytes(keyStr);
+    // std::vector<uint8_t> plaintext = hexStringToBytes(plaintextStr);
+    // std::array<uint8_t, 16> nonce = hexStringToArray(nonceStr);
+
+    // AES256_CTR aes256Ctr(aes256Key, nonce);
+
+    // std::vector<uint8_t> ciphertext = aes256Ctr.encrypt(plaintext); 
+    // std::vector<uint8_t> decrypted = aes256Ctr.decrypt(ciphertext);
+
+    // std::cout << "Plaintext: " << std::endl;
+    // printHexFormatted(plaintext);
+
+    // std::cout << "Ciphertext: " << std::endl;
+    // printHexFormatted(ciphertext);
+
+    // std::cout << "Decrypted: " << std::endl;
+    // printHexFormatted(decrypted);
+//     return 0;
+// }

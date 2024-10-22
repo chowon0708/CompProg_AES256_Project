@@ -7,7 +7,7 @@ extern const uint8_t S_BOX[256];
 
 class AES256{
     public:
-        AES256(const std::array<uint32_t, 8> &key);
+        AES256(const std::vector<uint8_t> &key);
 
         void encrypt(std::array<std::array<uint8_t, 4>, 4> &state);
         void decrypt(std::array<std::array<uint8_t, 4>, 4> &state);
@@ -29,6 +29,6 @@ class AES256{
         void mixColumns(std::array<std::array<uint8_t, 4>, 4> &state);
         void invMixColumns(std::array<std::array<uint8_t, 4>, 4> &state);
 
-        std::array<uint32_t, Nk> key_;
+        std::vector<uint8_t> key_;
         std::vector<std::array<uint32_t, 4>> roundkeys_;
 };

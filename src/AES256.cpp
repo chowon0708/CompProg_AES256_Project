@@ -78,7 +78,7 @@ uint8_t gmul(uint8_t a, uint8_t b) {
     return p;
 }
 
-AES256::AES256(const std::array<uint32_t, 8> &key): key_(key){
+AES256::AES256(const std::vector<uint8_t> &key): key_(key){
     keyExpansion();
 }
 
@@ -107,26 +107,29 @@ void AES256::printState(const std::array<std::array<uint8_t, 4>, 4> &state, int 
     std::cout << std::endl;
 }
 
-void AES256::keyExpansion(){
-    const int ExpandedkeySize = 4*(Nr+1);
-
+void AES256::keyExpansion() {
+    const int ExpandedkeySize = 4 * (Nr + 1);
     roundkeys_.resize(ExpandedkeySize / 4);
 
-    for(int i=0; i<Nk; i++){
-        roundkeys_[i/4][i%4] = key_[i];
+    // First Nk words are the key itself (8 * 4 = 32 bytes, so process in 4-byte chunks)
+    for (int i = 0; i < Nk; ++i) {
+        roundkeys_[i / 4][i % 4] = (key_[i * 4] << 24) |
+                                   (key_[(i * 4) + 1] << 16) |
+                                   (key_[(i * 4) + 2] << 8) |
+                                   (key_[(i * 4) + 3]);
     }
-    
-    for(int i=Nk; i<ExpandedkeySize; i++){
-        uint32_t temp = roundkeys_[(i - 1)/4][(i-1)%4];
 
-        if(i % Nk == 0){
-            temp = SubWord(RotWord(temp)) ^RCON[(i/Nk)-1];
-        }
-        else if (Nk > 6 && (i % Nk == 4)) { 
+    // Remaining words are generated using the key expansion routine
+    for (int i = Nk; i < ExpandedkeySize; ++i) {
+        uint32_t temp = roundkeys_[(i - 1) / 4][(i - 1) % 4];
+
+        if (i % Nk == 0) {
+            temp = SubWord(RotWord(temp)) ^ RCON[(i / Nk) - 1];
+        } else if (Nk > 6 && (i % Nk == 4)) {
             temp = SubWord(temp);
         }
 
-        roundkeys_[i/4][i%4] = roundkeys_[(i - Nk) / 4][(i - Nk) % 4] ^ temp;
+        roundkeys_[i / 4][i % 4] = roundkeys_[(i - Nk) / 4][(i - Nk) % 4] ^ temp;
     }
 }
 
