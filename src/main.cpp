@@ -72,25 +72,25 @@ int main(int argc, char* argv[]) {
 // The example is based on the NIST document: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/AES_CTR.pdf
 
 // int main(){
-    // std::string keyStr = "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4";
-    // std::string plaintextStr = "6BC1BEE22E409F96E93D7E117393172AAE2D8A571E03AC9C9EB76FAC45AF8E5130C81C46A35CE411E5FBC1191A0A52EFF69F2445DF4F9B17AD2B417BE66C3710";
-    // std::string nonceStr = "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF";
-    // std::vector<uint8_t> aes256Key = hexStringToBytes(keyStr);
-    // std::vector<uint8_t> plaintext = hexStringToBytes(plaintextStr);
-    // std::array<uint8_t, 16> nonce = hexStringToArray(nonceStr);
+//     std::string keyStr = "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4";
+//     std::string plaintextStr = "6BC1BEE22E409F96E93D7E117393172AAE2D8A571E03AC9C9EB76FAC45AF8E5130C81C46A35CE411E5FBC1191A0A52EFF69F2445DF4F9B17AD2B417BE66C3710";
+//     std::string nonceStr = "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF";
+//     std::vector<uint8_t> aes256Key = hexStringToBytes(keyStr);
+//     std::vector<uint8_t> plaintext = hexStringToBytes(plaintextStr);
+//     std::array<uint8_t, 16> nonce = hexStringToArray(nonceStr);
 
-    // AES256_CTR aes256Ctr(aes256Key, nonce);
+//     AES256_CTR aes256Ctr(aes256Key, nonce);
 
-    // std::vector<uint8_t> ciphertext = aes256Ctr.encrypt(plaintext); 
-    // std::vector<uint8_t> decrypted = aes256Ctr.decrypt(ciphertext);
+//     std::vector<uint8_t> ciphertext = aes256Ctr.encrypt(plaintext); 
+//     std::vector<uint8_t> decrypted = aes256Ctr.decrypt(ciphertext);
 
-    // std::cout << "Plaintext: " << std::endl;
-    // printHexFormatted(plaintext);
+//     std::cout << "Plaintext: " << std::endl;
+//     printHexFormatted(plaintext);
 
-    // std::cout << "Ciphertext: " << std::endl;
-    // printHexFormatted(ciphertext);
+//     std::cout << "Ciphertext: " << std::endl;
+//     printHexFormatted(ciphertext);
 
-    // std::cout << "Decrypted: " << std::endl;
-    // printHexFormatted(decrypted);
+//     std::cout << "Decrypted: " << std::endl;
+//     printHexFormatted(decrypted);
 //     return 0;
 // }

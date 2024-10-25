@@ -2,5 +2,8 @@ build/
 
 .vscode/
 
+
+.test/
+
 *.log     
 *.tmp 

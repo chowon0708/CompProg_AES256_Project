@@ -27,7 +27,9 @@ class AES256{
         void shiftRows(std::array<std::array<uint8_t, 4>, 4> &state);
         void invShiftRows(std::array<std::array<uint8_t, 4>, 4> &state);
         void mixColumns(std::array<std::array<uint8_t, 4>, 4> &state);
+        void mixColumns_lookup(std::array<std::array<uint8_t, 4>, 4> &state);
         void invMixColumns(std::array<std::array<uint8_t, 4>, 4> &state);
+        void invMixColumns_lookup(std::array<std::array<uint8_t, 4>, 4> &state);
 
         std::vector<uint8_t> key_;
         std::vector<std::array<uint32_t, 4>> roundkeys_;
